@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Proxy.Services.ProxyParsers;
+using Proxy.Workers;
 
 namespace Proxy
 {
@@ -23,6 +20,13 @@ namespace Proxy
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddHttpClient();
+            
+            //Proxy parsers
+            //services.AddSingleton<IProxyParser, HideMyParser>();
+            //services.AddSingleton<IProxyParser, FreeProxyCzParser>();
+            services.AddSingleton<IProxyParser, FreeProxyListParser>();
+            services.AddHostedService<ProxyParserProcess>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
