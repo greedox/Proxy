@@ -4,4 +4,27 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Migrations\20200808152056_Initial.cs" />
+    <Compile Remove="Migrations\20200808152056_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200808152438_InitialCreated.cs" />
+    <Compile Remove="Migrations\20200808152438_InitialCreated.Designer.cs" />
+    <Compile Remove="Migrations\20200808152825_Initial.cs" />
+    <Compile Remove="Migrations\20200808152825_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200808154728_Initial.cs" />
+    <Compile Remove="Migrations\20200808154728_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200808155557_Initial.cs" />
+    <Compile Remove="Migrations\20200808155557_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200808160527_Initial.cs" />
+    <Compile Remove="Migrations\20200808160527_Initial.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Proxy.Models.Entities;
 using Proxy.Services.ProxyParsers;
 using System;
 using System.Collections.Generic;
@@ -11,10 +14,12 @@ namespace Proxy.Workers
     public class ProxyParserProcess : BackgroundService
     {
         private readonly IEnumerable<IProxyParser> _parsers;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public ProxyParserProcess(IEnumerable<IProxyParser> parsers)
+        public ProxyParserProcess(IEnumerable<IProxyParser> parsers, IServiceScopeFactory serviceScopeFactory)
         {
             _parsers = parsers;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,8 +36,26 @@ namespace Proxy.Workers
         {
             await foreach (var url in parser.GetPagesForParse())
             {
-                var proxies = parser.ParsePage(url);
-                //TODO: save proxy to DB
+                var proxies = await parser.ParsePage(url);
+                
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+                    foreach (var proxy in proxies)
+                    {
+                        var dbProxy = await dbContext.Proxies.FirstOrDefaultAsync(x => x.Host == proxy.Host && x.Port == proxy.Port);
+                        if (dbProxy == null)
+                        {
+                            dbContext.Proxies.Add(new ProxyEntity
+                            {
+                                Host = proxy.Host,
+                                Port = proxy.Port
+                            });
+                        }
+                    }
+
+                    await dbContext.SaveChangesAsync();
+                }
             }
         }
     }
