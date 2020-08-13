@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Proxy.Services;
 using Proxy.Services.ProxyParsers;
 using Proxy.Workers;
 
@@ -25,12 +26,16 @@ namespace Proxy
 
             services.AddControllersWithViews();
             services.AddHttpClient();
-            
+
             //Proxy parsers
             //services.AddSingleton<IProxyParser, HideMyParser>();
             //services.AddSingleton<IProxyParser, FreeProxyCzParser>();
             services.AddSingleton<IProxyParser, FreeProxyListParser>();
             services.AddHostedService<ProxyParserProcess>();
+
+            //Proxy checker
+            services.AddSingleton<ProxyCheckerActor>();
+            services.AddHostedService<ProxyCheckerProcess>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
